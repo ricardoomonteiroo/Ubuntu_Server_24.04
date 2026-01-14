@@ -1,1 +1,339 @@
 
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+# Conteúdo estudado nessa implementação:
+# Instalando o Firewall UFW (Uncomplicated Firewall) no Ubuntu Server
+# Instalando o Rsyslog (Syslog/Logs) no Ubuntu Server
+# Verificando a Versão e Status do Firewall UFW no Ubuntu Server
+# Habilitando (ENABLE) o Firewall UFW no Ubuntu Server
+# Verificando o Serviço do UFW no Ubuntu Server
+# Configurando as Regras (RULES) de Bloqueio (DENY) padrão (DEFAULT) de Entrada (INCOMING) e Saída (OUTGOING) do UFW no Ubuntu Server
+# Configurando o Nível de Log (LOGGING) do UFW no Ubuntu Server
+# Liberando (ALLOW) a Entrada (INCOMING) e Saída (OUTGOING) da Interface de Loopback do UFW no Ubuntu Server
+# Liberando (ALLOW) as Saídas (OUTGOING) dos Protocolos Básicos no UFW do Ubuntu Server
+# Liberando (ALLOW) a Saída (OUTGOING) do Protocolo ICMP do UFW no Ubuntu Server
+# Limitando (LIMIT) e Logando Tudo (LOG-ALL) a Conexão de Entrada (INCOMING) do Protocolo SSH do UFW no Ubuntu Server
+# Melhorando a Segurança e Logs Detalhados do TCPWrappers no Ubuntu Server
+# Testando novamente a conexão com o OpenSSH no Ubuntu Server
+# Utilizando o comando LNAV (Logfile Navigator) no Ubuntu Server
+
+Instalando o Firewall UFW (Uncomplicated Firewall) no Ubuntu Server
+
+OBSERVAÇÃO IMPORTANTE: COMO ESTAMOS UTILIZANDO A VERSÃO DO UBUNTU SERVER 24.04.X LTS NO MODO MINIMIZADO (MINIMAL) O UFW (E O IPTABLES) NÃO VEM INSTALADO POR PADRÃO.
+
+# atualizando as listas do Apt
+# opção do comando apt: update (Resynchronize the package index files from their sources)
+sudo apt update
+
+# instalando o UFW no Ubuntu Server
+# opção do comando apt: install (install is followed by one or more package names)
+sudo apt install ufw
+
+# Verificando a Versão e Status do Firewall UFW no Ubuntu Server
+
+# Verificando a versão do UFW
+sudo ufw version
+
+# Verificando o status do UFW (Status padrão: inactive - inativo/desativado)
+sudo ufw status
+
+Habilitando (ENABLE) o Firewall UFW no Ubuntu Server
+
+#Habilitando e iniciando o Firewall UFW
+sudo ufw enable
+  Command may disrupt existing ssh connections. Proceed with operation (y|n)? y <Enter>
+  Firewall is active and enabled on system startup
+
+#Verificando o status do UFW (Status padrão após habilitar o UFW: active - ativo/ativado)
+sudo ufw status verbose
+
+# Reiniciando o Serviço do UFW
+sudo systemctl restart ufw
+
+# Verificando o Serviço do UFW no Ubuntu Server
+
+# Verificando o serviço do UFW
+sudo systemctl status ufw
+sudo systemctl restart ufw
+sudo systemctl stop ufw
+sudo systemctl start ufw
+
+# Analisando os Log's e mensagens de erro do UFW
+#opção do comando journalctl: x (catalog), e (pager-end), u (unit)
+sudo journalctl -xeu ufw
+
+########################################### CONFIGURANDO REGRAS BASICAS EM NOSSO FIREWALL UFW##########################################################################################################
+
+Configurando as Regras (RULES) de Bloqueio (DENY) padrão (DEFAULT) de Entrada (INCOMING) e Saída (OUTGOING) do UFW no Ubuntu Server
+
+#Configurando a Regra Padrão de Bloqueio de Entrada
+sudo ufw default deny incoming comment 'Bloqueia entradas'
+  Default incoming policy changed to 'deny'
+  (be sure to update your rules accordingly)
+
+#Configurando a Regra Padrão de Bloqueio de Saída
+sudo ufw default deny outgoing comment 'Regra Bloqueio de Entrada'
+  Default outgoing policy changed to 'deny'
+  (be sure to update your rules accordingly)
+
+#Verificando as Regras Detalhadas padrão do UFW
+sudo ufw status verbose
+
+ADICIONANDO NOVAS REGRAS AO  NOSSO FIREWALL UFW
+
+Liberando (ALLOW) as Saídas (OUTGOING) dos Protocolos Básicos no UFW do Ubuntu Server
+
+#Regra de liberação (ALLOW) de Saída (OUT) da Consulta do Protocolo SSH (22/tcp)
+sudo ufw allow out 22/tcp comment 'Liberando a saida para SSH na rede local (22/SSH)'
+
+#Regra de liberação (ALLOW) de Saída (OUT) da Consulta do Protocolo DNS (53/udp)
+sudo ufw allow out 53/udp comment 'Liberando a saida para consulta do DNS'
+
+#Regra de liberação (ALLOW) de Saída (OUT) da Navegação do Protocolo HTTP (80/tcp)
+sudo ufw allow out 80/tcp comment 'Liberando a saida para navegação do HTTP'
+
+#Regra de liberação (ALLOW) de Saída (OUT) da Navegação do Protocolo HTTPS (443/tcp)
+sudo ufw allow out 443/tcp comment 'Liberando a saida para navegação do HTTPS'
+
+#Regra de liberação (ALLOW) de Saída (OUT) Do Protocolo NTP (123/udp)
+sudo ufw allow out 123/udp comment 'Liberando a saida para sincronismo do NTP'
+
+# Regra Liberando (ALLOW) de Saida (OUT) Do protocolo Netbios (139/tcp)
+sudo ufw allow out 137/tcp comment 'Liberando Serviço de nomes NetBIOS (navegação de rede)'
+
+# Regra Liberando (ALLOW) de Saida (OUT) Do Serviço de datagramas NetBIOS (navegação de rede)
+sudo ufw allow out 138/tcp comment 'Serviço de datagramas NetBIOS (navegação de rede)'
+
+# Regra Liberando (ALLOW) de Saida (OUT) Do protocolo Netbios (139/tcp)
+sudo ufw allow out 139/tcp comment 'Liberando o NETBIOS na Rede local (139/NETBIOS)'
+
+# Regra Liberando (ALLOW) de Saida (OUT) Do protocolo SMB direto sobre TCP/IP)
+sudo ufw allow out 445/tcp comment 'SMB direto sobre TCP/IP, usado em ambientes modernos'
+
+#Verificando as Regras Detalhadas padrão do UFW
+sudo ufw status verbose
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# ALERTA - POR PADRÃO A SAIDA DO ICMP SO NÃO VEM DESCRITA NO SCRIPT E NECESSARIO  EDITA-LO  E INSERIR MANUALMENTE 
+
+# Liberando (ALLOW) a Saída (OUTGOING) do Protocolo ICMP do UFW no Ubuntu Server
+
+#Editando o arquivo de configuração before.rules (ANTES DAS REGRAS) do UFW
+sudo vim /etc/ufw/before.rules
+
+# habilitando o número de linhas no editor de texto VIM
+ESC SHIFT :set number <Enter>
+
+#entrando no modo de edição do editor de texto VIM
+INSERT
+
+# inserir as informações na linha: 39
+# liberando a saída do protocolo ICMP (Permitindo o Ping - Echo Request)
+# opções do comando iptables usados pelo UFW: -A (append), -p (protocol), -j (jump target)
+# ok icmp codes for OUTPUT
+-A ufw-before-output -p icmp --icmp-type destination-unreachable -j ACCEPT
+-A ufw-before-output -p icmp --icmp-type time-exceeded -j ACCEPT
+-A ufw-before-output -p icmp --icmp-type parameter-problem -j ACCEPT
+-A ufw-before-output -p icmp --icmp-type echo-request -j ACCEPT
+
+
+# Limitando (LIMIT) e Logando Tudo (LOG-ALL) a Conexão de Entrada (INCOMING) do Protocolo SSH do UFW no Ubuntu Server
+
+# Limitando (LIMIT) e Logando Tudo (LOG-ALL) da Sub-rede 172.16.1.0/24 (FROM) acessar o servidor (TO) do OpenSSH Server na porta (PORT) 22 via protocolo TCP (PROTO TCP)
+sudo ufw limit log-all from 192.101.0/24 to 172.16.1.30 port 22 proto tcp comment 'Limitando a sub-rede para acessar o OpenSSH Server'
+sudo ufw limit log-all from 192.168.1.0/24 to any port 22 proto tcp comment 'Limitando o SSH Para acessar somente pela Vlan 101'
+
+# Verificando as Regras Detalhadas padrão do UFW em modo Verboso
+sudo ufw status verbose
+
+# Configurando o Nível de Log (LOGGING) do UFW no Ubuntu Server
+# Configurando o Nível de Log de Baixo (LOW) para Médio (MEDIUM)
+sudo ufw logging medium
+  Logging enabled
+
+# Verificando as Regras Detalhadas padrão do UFW
+sudo ufw status verbose
+
+COMANDOS BASICOS
+
+# Liberar a porta 8080 (por exemplo, para um servidor web) para a sub-rede 10.0.0.0/24 usando TCP
+sudo ufw allow from 10.0.0.0/24 to any port 8080 proto tcp
+
+# Deletar uma regra (se necessário):
+# Você pode listar as regras por número e depois deletá-las:
+sudo ufw status numbered
+sudo ufw delete <numero_da_regra>
+
+# Habilitar o UFW (se ainda não estiver ativo):
+sudo ufw enable
+
+# Como verificar e gerenciar as regras
+# Verificar o status e as regras ativas:
+ sudo ufw status verbose
